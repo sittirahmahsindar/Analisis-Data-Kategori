@@ -1,0 +1,234 @@
+/* =========================================================
+   PORTOFOLIO TUGAS ANALISIS DATA KATEGORI
+   Tampilan akademik profesional, responsif, dan ringan
+   ========================================================= */
+
+:root {
+  --adk-primary: #0f4c5c;
+  --adk-primary-dark: #0a3540;
+  --adk-accent: #d4a017;
+  --adk-soft: #f4f8f9;
+  --adk-border: #d9e3e6;
+  --adk-text: #233238;
+  --adk-muted: #66757c;
+  --adk-white: #ffffff;
+  --adk-success-soft: #eef7f2;
+}
+
+/* ---------- Page ---------- */
+body {
+  color: var(--adk-text);
+  background: #fbfcfd;
+  line-height: 1.72;
+}
+
+main.content {
+  max-width: 980px;
+}
+
+/* ---------- Title block ---------- */
+.quarto-title-block .quarto-title-banner {
+  background:
+    linear-gradient(135deg, rgba(15, 76, 92, 0.98), rgba(10, 53, 64, 0.96));
+  border-bottom: 5px solid var(--adk-accent);
+  padding-top: 2.4rem;
+  padding-bottom: 2.2rem;
+}
+
+.quarto-title-banner .title,
+.quarto-title-banner .subtitle {
+  color: var(--adk-white);
+}
+
+.quarto-title-banner .title {
+  font-weight: 750;
+  letter-spacing: -0.02em;
+}
+
+.quarto-title-banner .subtitle {
+  opacity: 0.92;
+  font-weight: 400;
+}
+
+/* ---------- Student identity card ---------- */
+.student-card {
+  background: var(--adk-white);
+  border: 1px solid var(--adk-border);
+  border-left: 5px solid var(--adk-primary);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin: 1rem 0 1.6rem 0;
+  box-shadow: 0 6px 18px rgba(28, 54, 63, 0.06);
+}
+
+.student-card .label {
+  color: var(--adk-muted);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.1rem;
+}
+
+.student-card .value {
+  font-size: 1.02rem;
+  font-weight: 650;
+  margin-bottom: 0.55rem;
+}
+
+/* ---------- Learning objective ---------- */
+.learning-box {
+  background: var(--adk-soft);
+  border: 1px solid var(--adk-border);
+  border-radius: 12px;
+  padding: 1rem 1.2rem;
+  margin: 1.2rem 0 1.6rem 0;
+}
+
+.learning-box strong {
+  color: var(--adk-primary-dark);
+}
+
+/* ---------- Headings ---------- */
+h1, h2, h3 {
+  color: var(--adk-primary-dark);
+}
+
+h1 {
+  margin-top: 2.1rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 2px solid var(--adk-border);
+  font-weight: 720;
+}
+
+h2 {
+  font-weight: 680;
+  margin-top: 1.55rem;
+}
+
+h3 {
+  font-weight: 650;
+}
+
+/* ---------- Table of contents ---------- */
+#TOC {
+  border-left: 2px solid var(--adk-border);
+  padding-left: 0.8rem;
+}
+
+#TOC a {
+  color: var(--adk-muted);
+}
+
+#TOC a.active {
+  color: var(--adk-primary);
+  font-weight: 700;
+}
+
+/* ---------- Code ---------- */
+div.sourceCode {
+  border: 1px solid var(--adk-border);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(28, 54, 63, 0.035);
+}
+
+pre.sourceCode {
+  margin-bottom: 0;
+}
+
+.cell-output {
+  border-left: 3px solid #b9c9ce;
+  padding-left: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+/* ---------- Tables ---------- */
+table {
+  background: var(--adk-white);
+}
+
+thead th {
+  background: var(--adk-primary);
+  color: var(--adk-white);
+  border-bottom: none !important;
+}
+
+tbody tr:nth-child(even) {
+  background: #f7fafb;
+}
+
+/* ---------- Blockquotes / instructions ---------- */
+blockquote {
+  background: var(--adk-soft);
+  border-left: 4px solid var(--adk-accent);
+  padding: 0.85rem 1rem;
+  border-radius: 0 8px 8px 0;
+  color: var(--adk-text);
+}
+
+/* ---------- Callouts ---------- */
+.callout {
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(28, 54, 63, 0.035);
+}
+
+.callout-note {
+  border-left-color: var(--adk-primary) !important;
+}
+
+/* ---------- Links ---------- */
+a {
+  color: var(--adk-primary);
+}
+
+a:hover {
+  color: var(--adk-primary-dark);
+}
+
+/* ---------- Footer ---------- */
+.footer-note {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--adk-border);
+  color: var(--adk-muted);
+  text-align: center;
+  font-size: 0.86rem;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 768px) {
+  .quarto-title-block .quarto-title-banner {
+    padding-top: 1.6rem;
+    padding-bottom: 1.5rem;
+  }
+
+  .student-card {
+    padding: 0.85rem 1rem;
+  }
+
+  body {
+    font-size: 0.97rem;
+  }
+}
+
+
+/* ---------- Student answer area ---------- */
+.answer-box {
+  background: #ffffff;
+  border: 1px solid var(--adk-border);
+  border-left: 5px solid var(--adk-accent);
+  border-radius: 10px;
+  padding: 1rem 1.15rem;
+  margin: 0.85rem 0 1.5rem 0;
+  min-height: 92px;
+  box-shadow: 0 3px 10px rgba(28, 54, 63, 0.04);
+}
+
+.answer-box strong {
+  color: var(--adk-primary-dark);
+}
+
+.answer-box p:last-child {
+  margin-bottom: 0;
+}

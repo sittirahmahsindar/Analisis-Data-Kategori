@@ -1,0 +1,426 @@
+---
+title: "Tugas 1 — Pengantar Analisis Data Kategori"
+subtitle: "Latihan Analisis Data dengan R dan Quarto"
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-title: "Daftar Isi"
+    toc-depth: 2
+    toc-location: right
+    code-copy: false
+    code-tools: false
+    number-sections: true
+    embed-resources: true
+    title-block-banner: true
+execute:
+  echo: true
+  warning: false
+  message: false
+lang: id
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+identitas <- read.csv("identitas_tugas.csv", stringsAsFactors = FALSE)
+file_data <- "C:/Users/user/Downloads/P1_241061009/data_tugas1_241061009.csv"
+
+data <- read.csv( 
+  file_data, 
+  na.strings = c("", "NA"), 
+  stringsAsFactors = FALSE 
+)
+```
+
+::: {.student-card}
+<div class="label">Mahasiswa</div>
+<div class="value">`r identitas$Nama[1]`</div>
+
+<div class="label">NIM</div>
+<div class="value">`r identitas$NIM[1]`</div>
+
+<div class="label">Kode Tugas</div>
+<div class="value">`r identitas$kode_tugas[1]`</div>
+:::
+
+::: {.learning-box}
+**Tujuan tugas.** Gunakan kembali konsep dan fungsi R yang telah dibahas pada Pertemuan 1
+untuk mengenali struktur data kategori, membuat ringkasan deskriptif, memvisualisasikan data,
+dan menjelaskan insight secara hati-hati.
+:::
+
+::: {.callout-note}
+## Pola kerja
+
+Ikuti pola kelas: **predict → run → inspect → explain**.
+
+Pada setiap bagian diberikan **sedikit petunjuk kode**.  
+Jika diminta menjelaskan atau menuliskan interpretasi, gunakan kotak **Jawaban Anda** yang telah disediakan.
+:::
+
+# 1. Mengenali Data
+
+Gunakan R untuk melihat beberapa baris awal, struktur data, dan nama variabel.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+```r
+head(...)
+str(...)
+names(...)
+```
+
+Ganti `...` dengan objek data yang digunakan.
+:::
+
+```{r}
+head(data)
+str(data)
+names(data)
+
+```
+
+Lengkapi tabel berikut.
+
+| Variabel | Jenis Variabel | Alasan Singkat |
+|---|---|---|
+| RecordID | Identifier | Digunakan sebagai identitas unik setiap responden |
+| ProgramStudi | Nominal | Berisi kategori program studi tanpa urutan |
+| Gender | Nominal| Berisi kategori gender tanpa tingkatan |
+| DeviceUtama | Nominal | Berisi kategori perangkat tanpa urutan |
+| ModaBelajar | Nominal | Berisi kategori moda belajar tanpa tingkatan |
+| Kepuasan | Ordinall |Kategorinya memiliki tingkatan kepuasan |
+| IntensitasBelajar | Ordinal | Memiliki urutan Rendah, Sedang, dan Tinggi |
+| DurasiBelajarJam | Numerik | Menunjukkan lama belajar dalam satuan jam |
+
+Jawab singkat:
+
+1. Variabel mana yang merupakan identifier?
+2. Variabel mana yang bersifat ordinal?
+3. Mengapa kode angka belum tentu berarti data numerik?
+
+::: {.answer-box}
+**Jawaban**
+
+1. Variabel yang merupakan identifier adalah RecordID karena digunakan sebagai identitas unik untuk setiap responden.
+2. Variabel yang bersifat ordinal adalah Kepuasan dan IntensitasBelajar karena kategorinya memiliki tingkatan atau urutan.
+3. karena angka dapat digunakan sebagai kode atau label kategori. Jika angka hanya berfungsi sebagai kode kategori, angka tersebut tidak menunjukkan nilai yang dapat dihitung secara matematis.
+:::
+
+# 2. Menyiapkan Data Kategori
+
+Variabel latihan Anda:
+
+```{r}
+cat("Nominal :", identitas$nominal_utama[1], "\n")
+cat("Ordinal :", identitas$ordinal_utama[1], "\n")
+cat("Urutan  :", identitas$urutan_ordinal[1], "\n")
+```
+
+Lakukan hal berikut:
+
+1. ubah variabel nominal menjadi factor;
+2. ubah variabel ordinal menjadi ordered factor;
+3. periksa level kategorinya.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+Untuk nominal:
+
+```r
+factor(...)
+levels(...)
+```
+
+Untuk ordinal:
+
+```r
+factor(..., levels = ..., ordered = TRUE)
+```
+:::
+
+```{r}
+nominal_var <- identitas$nominal_utama[1]
+ordinal_var <- identitas$ordinal_utama[1]
+urutan <- strsplit(identitas$urutan_ordinal[1], "\\|")[[1]]
+
+
+# Mengubah variabel nominal menjadi factor
+data[[nominal_var]] <- factor(data[[nominal_var]]) 
+
+levels(data[[nominal_var]])
+
+data[[ordinal_var]] <- factor(
+  data[[ordinal_var]],
+  levels = urutan,
+  ordered = TRUE
+)
+
+levels(data[[ordinal_var]])
+
+# Memeriksa level kategori
+levels(data[[nominal_var]])
+levels(data[[ordinal_var]])
+
+```
+Tuliskan satu kalimat: **mengapa urutan level ordinal perlu ditetapkan dengan benar?**
+
+::: {.answer-box}
+**Jawaban**
+
+Urutan level ordinal wajib ditetapkan dengan benar agar analisis deskriptif, susunan tabel frekuensi, dan sumbu visualisasi grafik dapat menyajikan tahapan tingkatan data secara logis dan runtut dari nilai terendah hingga nilai tertinggi.
+
+:::
+
+# 3. Quality Control Awal
+
+Lakukan pemeriksaan sederhana terhadap:
+
+- struktur data;
+- level/kategori;
+- missing value;
+- konsistensi penulisan kategori.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+Beberapa pola fungsi yang dapat digunakan:
+
+```r
+str(...)
+levels(...)
+unique(...)
+is.na(...)
+colSums(...)
+```
+
+Pilih fungsi yang sesuai dengan tujuan pemeriksaan Anda.
+:::
+
+```{r}
+# Struktur data
+str(data)
+
+# Level kategori
+levels(data$DeviceUtama)
+levels(data$IntensitasBelajar)
+
+# Kategori yang muncul
+unique(data$DeviceUtama)
+unique(data$IntensitasBelajar)
+
+# Missing value
+colSums(is.na(data))
+
+# Frekuensi kategori
+table(data$DeviceUtama, useNA = "ifany")
+table(data$IntensitasBelajar, useNA = "ifany")
+```
+
+Tuliskan **dua temuan singkat** dari pemeriksaan tersebut.
+
+::: {.answer-box}
+**Jawaban**
+
+1. Terdapat data hilang (missing value / NA) pada dataset masing-masing sebanyak 1 data kosong di variabel DeviceUtama, IntensitasBelajar, dan DurasiBelajarJam .
+2. Variabel DeviceUtama memiliki 3 level faktor yaitu kategori Laptop, Smartphone, dan Tablet, sedangkan IntensitasBelajar sukses terurut menjadi Ordered Factor dengan kategori Rendah, Sedang, dan Tinggi.
+:::
+
+# 4. Frekuensi dan Proporsi
+
+Sebelum menjalankan kode, prediksi:
+
+> Menurut Anda, kategori mana yang paling banyak muncul pada variabel nominal Anda?
+
+::: {.answer-box}
+**Prediksi**
+
+Menurut dugaan awal, kategori Smartphone merupakan kategori perangkat yang paling banyak muncul pada variabel DeviceUtama karena gawai tersebut memiliki tingkat mobilitas yang sangat tinggi, praktis dibawa ke mana, dan hampir seluruh mahasiswa memilikinya sebagai alat komunikasi sehari-hari.
+...
+:::
+
+Setelah itu, buat:
+
+- tabel frekuensi untuk variabel nominal;
+- proporsi untuk variabel ordinal.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+```r
+table(...)
+prop.table(...)
+```
+
+Anda dapat menyimpan hasil `table()` ke sebuah objek terlebih dahulu sebelum menghitung proporsi.
+:::
+
+```{r}
+# Tabel frekuensi DeviceUtama
+frekuensi_device <- table(data$DeviceUtama, useNA = "ifany")
+frekuensi_device
+
+# Tabel proporsi IntensitasBelajar
+frekuensi_intensitas <- table(data$IntensitasBelajar, useNA = "ifany")
+
+proporsi_intensitas <- prop.table(frekuensi_intensitas)
+proporsi_intensitas
+
+# Proporsi dalam persen
+proporsi_intensitas * 100
+```
+
+Tuliskan **dua kalimat insight** berdasarkan output.
+
+::: {.answer-box}
+**Interpretasi**
+
+1. Berdasarkan tabel frekuensi variabel DeviceUtama, mayoritas responden menggunakan Smartphone yaitu sebanyak 39 responden, yang kemudian diikuti oleh pengguna Tablet sebanyak 37 responden dan Laptop sebanyak 31 responden.
+2. Berdasarkan proporsi IntensitasBelajar, kategori Sedang memiliki proporsi terbesar yaitu mencapai 41,67%, diikuti kategori Tinggi sebesar 37,04% dan Rendah sebesar 20,37%.
+:::
+
+# 5. Tabel Silang
+
+Pasangan variabel Anda:
+
+```{r}
+x <- identitas$tab_baris[1]
+y <- identitas$tab_kolom[1]
+
+cat("Baris :", x, "\n")
+cat("Kolom :", y, "\n")
+```
+
+Buat tabel silang untuk kedua variabel tersebut.
+
+Jika diperlukan, tampilkan proporsi per baris untuk membantu membaca pola.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+```r
+table(..., ...)
+prop.table(..., margin = 1)
+```
+
+Lengkapi sendiri objek yang diperlukan.
+:::
+
+```{r}
+x <- identitas$tab_baris[1]
+y <- identitas$tab_kolom[1]
+
+cat("Baris :", x, "\n")
+cat("Kolom :", y, "\n")
+
+# Membuat tabel silang
+tabel_silang <- table(data[[x]], data[[y]])
+
+tabel_silang
+
+# Proporsi per baris
+proporsi_baris <- prop.table(
+  tabel_silang,
+  margin = 1
+)
+
+proporsi_baris
+
+# Dalam persen
+round(proporsi_baris * 100, 2)
+
+```
+
+Tuliskan **satu kalimat** yang menjelaskan pola yang tampak.
+
+::: {.answer-box}
+**Interpretasi**
+
+Berdasarkan tabel proporsi baris, kelompok mahasiswa Laki-laki dan Perempuan menunjukkan kecenderungan pola yang serupa, di mana keduanya paling banyak memilih moda Praktik sebagai metode belajar utama (masing-masing sebesar 38,78% untuk Laki-laki dan 38,98% untuk Perempuan), diikuti oleh penggunaan Buku sebagai pilihan terbanyak kedua.
+...
+:::
+
+::: {.callout-important}
+Gunakan bahasa deskriptif. Jangan langsung menyimpulkan adanya hubungan signifikan
+atau sebab-akibat.
+:::
+
+# 6. Visualisasi Kategorik
+
+Variabel yang divisualisasikan:
+
+```{r}
+v <- identitas$visualisasi[1]
+cat("Variabel grafik :", v, "\n")
+```
+
+Buat **satu grafik batang** seperti yang telah dipelajari pada Pertemuan 1.
+
+::: {.callout-tip}
+## Petunjuk kode
+
+```r
+library(ggplot2)
+
+ggplot(..., aes(x = ...)) +
+  geom_bar() +
+  labs(...)
+```
+
+Sesuaikan objek data, variabel, judul, dan label sumbu.
+:::
+
+```{r}
+v <- identitas$visualisasi[1]
+cat("Variabel grafik :", v, "\n")
+library(ggplot2)
+
+# Membuat grafik batang untuk DeviceUtama
+ggplot(subset(data, !is.na(data[[v]])), aes(x = .data[[v]], fill = .data[[v]])) +
+  geom_bar() +
+  labs(
+    title = paste("Distribusi Frekuensi Penggunaan", v),
+    x = "Jenis Perangkat Utama Belajar",
+    y = "Jumlah Mahasiswa"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+Tuliskan **satu kalimat** interpretasi grafik.
+
+::: {.answer-box}
+**Interpretasi**
+
+Visualisasi grafik batang di atas menyajikan distribusi frekuensi pemilihan jenis perangkat utama penunjang aktivitas belajar mahasiswa. Karakteristik kepemilikan gawai mahasiswa responden secara jelas didominasi oleh alat komunikasi portabel berbasis layar sentuh, di mana kategori Smartphone mencatatkan frekuensi tertinggi dengan digunakan oleh 39 mahasiswa, yang kemudian diikuti secara ketat oleh kategori Tablet sebanyak 37 mahasiswa. Sementara itu, perangkat komputer (Laptop) berada pada posisi terakhir dengan jumlah pengguna paling sedikit, yaitu hanya mencakup 31 mahasiswa.
+...
+:::
+
+# 7. Kesimpulan
+
+Tuliskan **3 poin kesimpulan singkat** berdasarkan hasil analisis.
+
+Setiap kesimpulan harus:
+
+- didukung oleh output yang telah Anda hasilkan;
+- menggunakan angka yang relevan;
+- ditulis dengan bahasa Anda sendiri;
+- tidak menggunakan klaim sebab-akibat.
+
+::: {.answer-box}
+**Kesimpulan**
+
+1. Pemanfaatan gawai berbasis layar sentuh portabel sangat dominan di kalangan mahasiswa responden, ditunjukkan dengan frekuensi penggunaan Smartphone oleh 39 mahasiswa dan Tablet oleh 37 mahasiswa sebagai perangkat utama belajar, yang melampaui jumlah pemakai Laptop (31 mahasiswa)
+2. Karakteristik keterlibatan atau kerajinan belajar mahasiswa cenderung berada pada kategori menengah ke atas, dibuktikan dengan akumulasi persentase Intensitas Belajar pada kategori Sedang (41,67%) dan kategori Tinggi (37,04%) yang mencakup bagian terbesar dari keseluruhan data.
+3. Pola pemilihan cara belajar utama menunjukkan kecenderungan yang identik lintas gender, di mana pilihan metode Praktik memuncaki persentase tertinggi baik pada kelompok Laki-laki (38,78%) maupun kelompok Perempuan (38,98%) jika dibandingkan dengan metode Buku, Diskusi, atau Video.
+:::
+
+::: {.footer-note}
+**Analisis Data Kategori — Tugas 1**  
+Predict → Run → Inspect → Explain
+:::
